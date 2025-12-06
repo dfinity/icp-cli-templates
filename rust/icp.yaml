@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v0.1.0-beta.0/docs/schemas/icp-yaml-schema.json
+canisters:
+  - name: {{ project-name }}
+    recipe:
+      type: "@dfinity/rust"
+      configuration:
+        # cargo package for canister (required field)
+        package: {{ project-name }} 
+        shrink: true
+        # optional
+        candid: {{ project-name }}.did
+        metadata:
+          - name: "crate:version"
+            value: 1.0.0
