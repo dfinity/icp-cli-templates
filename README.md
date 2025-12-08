@@ -15,5 +15,6 @@ icp new <project-name> --subfolder <template-name>
 
 ## Templates:
 
-* motoko - A basic motoko canister
-* rust - A basic rust canister
+* motoko - A basic motoko canister.
+* rust - A basic rust canister.
+* hello-world - Frontend and backend canister in rust or motoko.
