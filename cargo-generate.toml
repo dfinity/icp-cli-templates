@@ -2,4 +2,5 @@
 sub_templates = [
   "motoko",
   "rust",
+  "hello-world",
 ]

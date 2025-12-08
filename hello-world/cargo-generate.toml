@@ -1,0 +1,13 @@
+[placeholders]
+backend_type = { type = "string", prompt = "What's your backend weapon of choice?", choices = ["rust", "motoko"], default = "rust" }
+# We're only supporting react at the moment, so this variable is not really used
+frontend_type = { type = "string", prompt = "Pick a frontend framework:", choices = ["react"], default = "react" }
+
+[conditional.'backend_type == "rust"']
+ignore = [ "motoko-backend" ]
+
+[conditional.'backend_type == "motoko"']
+ignore = [ "rust-backend" ]
+
+[hooks]
+pre = ["rename-backend-dir.rhai"]
