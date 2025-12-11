@@ -1,4 +1,4 @@
-# Various IDEs and Editors
+
 .vscode/
 .idea/
 **/*~
@@ -10,7 +10,5 @@
 # environment variables
 .env
 
-# motoko
-.mops
-*.wasm
-
+# icp-cli
+.icp/cache/
