@@ -12,7 +12,8 @@ build:
       command: npm ci
 
       # Generate the bindings from backend.did file in the backend canister
-      # You could choose to run this once manually and check the generated code in
+      # You could choose to run this once manually and checkin the generated code
+      # instead of running it every single time
     - type: script
       command:  npm run generate --prefix app 
 
