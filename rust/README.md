@@ -12,12 +12,12 @@ The [`icp.yaml`](./icp.yaml) file configures a canister using the built-in `rust
 
 ```yaml
 canisters:
-  - name: {{ project-name }}
+  - name: backend
     recipe:
       type: "@dfinity/rust"
       configuration:
         # cargo package for canister (required field)
-        package: {{ project-name }} 
+        package: backend
         shrink: true
         # optional
         candid: {{ project-name }}.did
@@ -70,6 +70,8 @@ The recipe automatically:
 
 ## Run it
 
+### Using the local network
+
 ```
 # Start a local network
 icp network start --background
@@ -78,7 +80,7 @@ icp network start --background
 icp deploy
 
 # make a call the canister
-icp canister call {{project-name}} greet '("Internet Computer")'
+icp canister call backend greet '("Internet Computer")'
 
 # Stop the network
 icp network stop
