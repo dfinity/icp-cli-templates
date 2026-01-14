@@ -1,14 +1,25 @@
-# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v0.1.0-beta.2/docs/schemas/icp-yaml-schema.json
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v0.1.0-beta.3/docs/schemas/icp-yaml-schema.json
 canisters:
-  - name: {{ project-name }}
+  - name: backend 
     recipe:
       type: "@dfinity/rust"
       configuration:
         # cargo package for canister (required field)
-        package: {{ project-name }} 
+        package: backend 
         shrink: true
         # optional
         candid: {{ project-name }}.did
         metadata:
           - name: "crate:version"
             value: 1.0.0
+
+{% if network_type == "Docker" -%}
+networks:
+  # Override the local network with a docker network
+  - name: local
+    mode: managed
+    image: ghcr.io/dfinity/icp-cli-network-launcher
+    port-mapping:
+      - 0:4943
+
+{%- endif %}

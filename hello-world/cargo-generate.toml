@@ -2,6 +2,7 @@
 backend_type = { type = "string", prompt = "What's your backend weapon of choice?", choices = ["rust", "motoko"], default = "rust" }
 # We're only supporting react at the moment, so this variable is not really used
 frontend_type = { type = "string", prompt = "Pick a frontend framework:", choices = ["react"], default = "react" }
+network_type = { type = "string", prompt = "Use the default network or a dockerized one?", choices = ["Default", "Docker"], default = "Default" }
 
 [conditional.'backend_type == "rust"']
 ignore = [ "motoko-backend" ]
