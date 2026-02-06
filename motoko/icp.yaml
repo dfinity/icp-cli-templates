@@ -3,7 +3,7 @@
 canisters:
   - name: {{project-name}}
     recipe:
-      type: "@dfinity/motoko"
+      type: "@dfinity/motoko@v3.0.0"
       configuration:
         main: src/main.mo
         args: --incremental-gc
