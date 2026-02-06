@@ -14,7 +14,7 @@ The [`icp.yaml`](./icp.yaml) file configures a canister using the built-in `rust
 canisters:
   - name: backend
     recipe:
-      type: "@dfinity/rust"
+      type: "@dfinity/rust@v3.0.0"
       configuration:
         # cargo package for canister (required field)
         package: backend
