@@ -1,0 +1,44 @@
+type satoshi = nat64;
+
+type millisatoshi_per_vbyte = nat64;
+
+type bitcoin_address = text;
+
+type outpoint = record {
+  txid : blob;
+  vout : nat32;
+};
+
+type utxo = record {
+  outpoint : outpoint;
+  value : satoshi;
+  height : nat32;
+};
+
+type get_utxos_response = record {
+  utxos : vec utxo;
+  tip_block_hash : blob;
+  tip_height : nat32;
+  next_page : opt blob;
+};
+
+type bitcoin_info = record {
+  network : text;
+};
+
+service : {
+  // Query the balance of a Bitcoin address
+  "get_balance" : (bitcoin_address) -> (satoshi);
+
+  // Query the UTXOs for a Bitcoin address
+  "get_utxos" : (bitcoin_address) -> (get_utxos_response);
+
+  // Get current fee percentiles
+  "get_fee_percentiles" : () -> (vec millisatoshi_per_vbyte);
+
+  // Get Bitcoin network configuration info
+  "get_bitcoin_info" : () -> (bitcoin_info) query;
+
+  // Simple greeting to verify the canister is working
+  "greet" : (text) -> (text) query;
+}

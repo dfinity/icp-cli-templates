@@ -1,0 +1,14 @@
+[template]
+description = "ICP project with local Bitcoin integration using Docker Compose"
+
+[placeholders]
+backend_type = { type = "string", prompt = "Choose your backend language:", choices = ["rust", "motoko"], default = "rust" }
+
+[conditional.'backend_type == "rust"']
+ignore = [ "motoko-backend" ]
+
+[conditional.'backend_type == "motoko"']
+ignore = [ "rust-backend" ]
+
+[hooks]
+pre = ["rename-backend-dir.rhai"]

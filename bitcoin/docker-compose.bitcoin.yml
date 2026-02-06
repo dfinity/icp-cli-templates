@@ -1,0 +1,45 @@
+# Docker Compose setup for local ICP development with Bitcoin integration
+#
+# This compose file runs:
+# - bitcoind: Bitcoin Core in regtest mode for local testing
+# - icp-network: IC network launcher with Bitcoin subnet support
+#
+# The network launcher connects to bitcoind and provides a local IC replica
+# with native Bitcoin integration capabilities.
+
+services:
+  # Bitcoin Core node running in regtest mode
+  bitcoind:
+    image: lncm/bitcoind:v27.2
+    command:
+      - -regtest
+      - -server
+      - -rpcbind=0.0.0.0
+      - -rpcallowip=0.0.0.0/0
+      - -rpcuser=ic-btc-integration
+      - -rpcpassword=ic-btc-integration
+      - -fallbackfee=0.00001
+      - -txindex=1
+    ports:
+      - "18443:18443"  # RPC port
+      - "18444:18444"  # P2P port
+    healthcheck:
+      test: ["CMD", "bitcoin-cli", "-regtest", "-rpcuser=ic-btc-integration", "-rpcpassword=ic-btc-integration", "getblockchaininfo"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # IC Network launcher with Bitcoin subnet
+  icp-network:
+    image: ghcr.io/dfinity/icp-cli-network-launcher:latest
+    depends_on:
+      bitcoind:
+        condition: service_healthy
+    environment:
+      - ICP_CLI_NETWORK_LAUNCHER_INTERFACE_VERSION=1.0.0
+    command:
+      - --bitcoind-addr=bitcoind:18444
+    ports:
+      - "8000:4943"  # IC gateway port (use 0 for a random host port)
+    volumes:
+      - "${ICP_STATUS_DIR:-/tmp/icp-status}:/app/status"

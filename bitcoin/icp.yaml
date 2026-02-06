@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v0.1.0/docs/schemas/icp-yaml-schema.json
+
+canisters:
+  - backend
+
+networks:
+  # Local network with Bitcoin integration via Docker Compose
+  - name: local
+    mode: managed
+    compose:
+      file: docker-compose.bitcoin.yml
+      gateway-service: icp-network
+
+environments:
+  - name: local
+    network: local
+    settings:
+      backend:
+        environment_variables:
+          BITCOIN_NETWORK: "regtest"

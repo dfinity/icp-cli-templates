@@ -1,0 +1,13 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+bitcoin = "0.32"
+candid = "0.10"
+ic-cdk = "0.19"
+serde = { version = "1.0", features = ["derive"] }
