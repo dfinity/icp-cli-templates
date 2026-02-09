@@ -2,8 +2,7 @@
 
 name: backend
 recipe:
-  type: "@dfinity/motoko"
+  type: "https://raw.githubusercontent.com/dfinity/icp-cli-recipes/refs/heads/main/recipes/motoko/recipe.hbs"
   configuration:
     main: src/main.mo
-    args: --incremental-gc
     candid: backend.did

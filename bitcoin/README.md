@@ -1,185 +1,115 @@
 # Bitcoin Integration Template
 
-This template demonstrates the full Bitcoin integration on the Internet Computer:
+Demonstrates reading Bitcoin balance from a canister on the Internet Computer using the [Bitcoin canister API](https://github.com/dfinity/bitcoin-canister/blob/master/INTERFACE_SPECIFICATION.md).
 
-- **Derive a Bitcoin address** controlled by the canister via threshold ECDSA (tECDSA)
-- **Receive Bitcoin** by mining to the canister's address (on regtest)
-- **Send Bitcoin** to any address
-- **Query balances and UTXOs**
+## Bitcoin Canister IDs
+
+| IC Network | Bitcoin Network | Bitcoin Canister ID |
+|------------|----------------|---------------------|
+| Local (PocketIC) | regtest | `g4xu7-jiaaa-aaaan-aaaaq-cai` |
+| IC mainnet | testnet | `g4xu7-jiaaa-aaaan-aaaaq-cai` |
+| IC mainnet | mainnet | `ghsi2-tqaaa-aaaan-aaaca-cai` |
+
+The `BITCOIN_NETWORK` environment variable controls which network and canister to use. It is configured per environment in `icp.yaml`.
 
 ## Prerequisites
 
 - [icp-cli](https://github.com/dfinity/icp-cli) installed
-- [Docker](https://docs.docker.com/get-docker/) installed and running
+- [Docker](https://docs.docker.com/get-docker/) installed and running (optional, but recommended)
 
-## Step 1: Create and Deploy
+> **Note:** Docker is used in this guide to run `bitcoind` for simplicity. If you prefer, you can install and run `bitcoind` natively instead — just make sure it is listening on the same ports (`18443` for RPC, `18444` for P2P) with the same credentials.
 
-Create a new project from this template, start the local network, and deploy:
+## Getting Started
 
-```bash
-icp new my-bitcoin-project --template bitcoin
-cd my-bitcoin-project
-icp network start
-icp build && icp deploy
-```
-
-This starts a local Bitcoin regtest node and an IC replica with Bitcoin integration via Docker Compose.
-
-## Step 2: Get the Canister's Bitcoin Address
-
-The canister derives a P2WPKH Bitcoin address from its threshold ECDSA key:
+Start a Bitcoin regtest node:
 
 ```bash
-icp canister call backend get_canister_btc_address '()'
-```
-
-This returns a `bcrt1q...` address (regtest SegWit format). Save it for the next steps:
-
-```bash
-CANISTER_BTC_ADDR=$(icp canister call backend get_canister_btc_address '()' | grep -o '"[^"]*"' | tr -d '"')
-echo "$CANISTER_BTC_ADDR"
-```
-
-## Step 3: Fund the Canister (Mine Blocks)
-
-On regtest, you fund addresses by mining blocks to them. Bitcoin requires **100 confirmations** before coinbase rewards are spendable, so mine 101 blocks:
-
-```bash
-docker compose -p icp-local exec bitcoind \
-  bitcoin-cli -regtest \
+docker run -d --name bitcoind \
+  -p 18443:18443 -p 18444:18444 \
+  lncm/bitcoind:v27.2 \
+  -regtest -server -rpcbind=0.0.0.0 -rpcallowip=0.0.0.0/0 \
   -rpcuser=ic-btc-integration -rpcpassword=ic-btc-integration \
-  generatetoaddress 101 "$CANISTER_BTC_ADDR"
+  -fallbackfee=0.00001 -txindex=1
 ```
 
-> **Note:** `icp network start` runs the compose project under the name `icp-local`, so use `-p icp-local` instead of `-f docker-compose.bitcoin.yml` when interacting with running services.
-
-This gives the canister 50 BTC (the block reward from the first block, now mature after 100 confirmations).
-
-## Step 4: Check the Balance
-
-Query the canister's balance (in satoshis):
+Start the local IC network and deploy:
 
 ```bash
-icp canister call backend get_balance "(\"$CANISTER_BTC_ADDR\")"
+icp network start -d
+icp deploy
 ```
 
-You should see `5_000_000_000` (50 BTC = 5 billion satoshis).
+## Usage
 
-You can also view the UTXOs:
+Verify the configured network and Bitcoin canister ID:
 
 ```bash
-icp canister call backend get_utxos "(\"$CANISTER_BTC_ADDR\")"
+icp canister call backend get_config '()'
 ```
 
-## Step 5: Transfer BTC
-
-Create a wallet in bitcoind, generate a destination address, and transfer BTC to it:
+Create a wallet and get a Bitcoin address:
 
 ```bash
-# Create a wallet in bitcoind (needed once, Bitcoin Core doesn't auto-create one)
-docker compose -p icp-local exec bitcoind \
-  bitcoin-cli -regtest \
+docker exec bitcoind bitcoin-cli -regtest \
   -rpcuser=ic-btc-integration -rpcpassword=ic-btc-integration \
   createwallet "default"
 
-# Create a destination address
-DEST_ADDR=$(docker compose -p icp-local exec bitcoind \
-  bitcoin-cli -regtest \
+ADDR=$(docker exec bitcoind bitcoin-cli -regtest \
   -rpcuser=ic-btc-integration -rpcpassword=ic-btc-integration \
   getnewaddress)
-
-# Transfer 1 BTC (100,000,000 satoshis)
-icp canister call backend transfer_btc \
-  "(record { destination = \"$DEST_ADDR\"; amount_in_satoshi = 100_000_000 : nat64 })"
 ```
 
-This returns the transaction ID.
-
-## Step 6: Confirm and Verify
-
-Mine a block to confirm the transaction:
+Check the balance (should be 0):
 
 ```bash
-docker compose -p icp-local exec bitcoind \
-  bitcoin-cli -regtest \
+icp canister call backend get_balance "(\"$ADDR\")"
+```
+
+Mine a block to the address (each block rewards 50 BTC):
+
+```bash
+docker exec bitcoind bitcoin-cli -regtest \
   -rpcuser=ic-btc-integration -rpcpassword=ic-btc-integration \
-  generatetoaddress 1 "$CANISTER_BTC_ADDR"
+  generatetoaddress 1 "$ADDR"
 ```
 
-Check the updated balances:
+Check the balance again (should be 5,000,000,000 satoshis = 50 BTC):
+
+> **Note:** Coinbase rewards require 100 confirmations before they can be spent. If you extend this example to send transactions, mine at least 101 blocks so the first block's reward becomes spendable.
 
 ```bash
-# Canister balance (should be reduced by ~1 BTC + fee)
-icp canister call backend get_balance "(\"$CANISTER_BTC_ADDR\")"
-
-# Destination balance
-icp canister call backend get_balance "(\"$DEST_ADDR\")"
+icp canister call backend get_balance "(\"$ADDR\")"
 ```
 
-## Canister API
+## Cleanup
 
-| Function | Type | Description |
-|----------|------|-------------|
-| `get_canister_btc_address` | update | Returns a Bitcoin address controlled by the canister |
-| `get_balance(address)` | update | Returns the balance in satoshis |
-| `get_utxos(address)` | update | Returns the UTXOs for an address |
-| `get_fee_percentiles` | update | Returns current fee percentiles (millisatoshi/vbyte) |
-| `transfer_btc({destination, amount_in_satoshi})` | update | Sends BTC and returns the transaction ID |
-| `get_bitcoin_info` | query | Returns the configured Bitcoin network |
-
-## Configuration
-
-### Network Configuration
-
-The `icp.yaml` defines the local network using Docker Compose:
-
-```yaml
-networks:
-  - name: local
-    mode: managed
-    compose:
-      file: docker-compose.bitcoin.yml
-      gateway-service: icp-network
+```bash
+icp network stop
+docker stop bitcoind && docker rm bitcoind
 ```
 
-This tells icp-cli to use Docker Compose to manage the local network, starting both the Bitcoin regtest node and the IC replica together.
+## Environments
 
-### Bitcoin Network Selection
+| Environment | IC Network | Bitcoin Network | Usage |
+|-------------|-----------|----------------|-------|
+| `local` | Local (PocketIC) | regtest | `icp deploy` |
+| `staging` | IC mainnet | testnet | `icp deploy --env staging` |
+| `production` | IC mainnet | mainnet | `icp deploy --env production` |
 
-The backend canister reads the `BITCOIN_NETWORK` environment variable to determine which Bitcoin network to use:
+## Cycle Costs
 
-- `regtest` (default) — Local regtest network via Docker Compose
-- `testnet` — Bitcoin testnet
-- `mainnet` — Bitcoin mainnet
+Bitcoin canister API calls require cycles. The canister must attach cycles when calling the Bitcoin canister — the Rust CDK handles this automatically, while the Motoko backend attaches them explicitly via `(with cycles = amount)`.
 
-The environment variable is configured in the environments section of `icp.yaml`:
+| API Call | Testnet / Regtest | Mainnet |
+|----------|-------------------|---------|
+| `bitcoin_get_balance` | 40,000,000 | 100,000,000 |
+| `bitcoin_get_utxos` | 4,000,000,000 | 10,000,000,000 |
+| `bitcoin_send_transaction` | 2,000,000,000 | 5,000,000,000 |
 
-```yaml
-environments:
-  - name: local
-    network: local
-    settings:
-      backend:
-        environment_variables:
-          BITCOIN_NETWORK: "regtest"
-```
-
-## Project Structure
-
-```
-.
-├── icp.yaml                    # Project configuration
-├── docker-compose.bitcoin.yml  # Local Bitcoin + IC network setup
-├── backend/
-│   ├── canister.yaml           # Canister build configuration
-│   ├── src/
-│   │   └── lib.rs              # Backend canister code
-│   └── backend.did             # Candid interface
-└── README.md
-```
+See [Bitcoin API costs](https://docs.internetcomputer.org/references/bitcoin-how-it-works) for the full reference.
 
 ## Learn More
 
+- [Bitcoin Canister API Specification](https://github.com/dfinity/bitcoin-canister/blob/master/INTERFACE_SPECIFICATION.md) — full API reference (get_utxos, send_transaction, fee percentiles, etc.)
 - [Internet Computer Bitcoin Integration](https://internetcomputer.org/docs/building-apps/bitcoin/overview)
 - [icp-cli Documentation](https://github.com/dfinity/icp-cli)
-- [Bitcoin Regtest Mode](https://developer.bitcoin.org/examples/testing.html)

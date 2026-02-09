@@ -1,18 +1,12 @@
-/// Bitcoin Integration Example
+/// Minimal Bitcoin integration example for the Internet Computer.
 ///
-/// This canister demonstrates basic Bitcoin integration on the Internet Computer.
-/// It provides functions to:
-/// - Check Bitcoin balance for any address
-/// - Get UTXOs (Unspent Transaction Outputs) for any address
-/// - Get current fee percentiles
+/// Demonstrates reading Bitcoin balance via the Bitcoin canister API.
 
 import Prim "mo:⛔";
 import Text "mo:core/Text";
 
 persistent actor Backend {
-  // Types from the management canister Bitcoin API
   public type Satoshi = Nat64;
-  public type MillisatoshiPerVByte = Nat64;
   public type BitcoinAddress = Text;
 
   public type Network = {
@@ -21,53 +15,25 @@ persistent actor Backend {
     #regtest;
   };
 
-  public type Outpoint = {
-    txid : Blob;
-    vout : Nat32;
-  };
-
-  public type Utxo = {
-    outpoint : Outpoint;
-    value : Satoshi;
-    height : Nat32;
-  };
-
-  public type GetUtxosResponse = {
-    utxos : [Utxo];
-    tip_block_hash : Blob;
-    tip_height : Nat32;
-    next_page : ?Blob;
-  };
-
-  public type BitcoinInfo = {
+  public type BitcoinConfig = {
     network : Text;
+    bitcoin_canister_id : Text;
   };
 
-  // Management canister interface for Bitcoin
-  let management_canister : actor {
+  type BitcoinCanister = actor {
     bitcoin_get_balance : shared {
       address : BitcoinAddress;
       network : Network;
       min_confirmations : ?Nat32;
     } -> async Satoshi;
+  };
 
-    bitcoin_get_utxos : shared {
-      address : BitcoinAddress;
-      network : Network;
-      filter : ?{ #min_confirmations : Nat32; #page : Blob };
-    } -> async GetUtxosResponse;
-
-    bitcoin_get_current_fee_percentiles : shared {
-      network : Network;
-    } -> async [MillisatoshiPerVByte];
-  } = actor ("aaaaa-aa");
-
-  /// Get the Bitcoin network from the BITCOIN_NETWORK environment variable.
-  private func getNetwork() : Network {
+  // Resolved once at init/upgrade (actor body has system capability).
+  // Environment variables are set at deploy time, so this is safe.
+  transient let network : Network = do {
     switch (Prim.envVar<system>("BITCOIN_NETWORK")) {
       case (?value) {
-        let networkStr = Text.toLower(value);
-        switch (networkStr) {
+        switch (Text.toLower(value)) {
           case ("mainnet") #mainnet;
           case ("testnet") #testnet;
           case _ #regtest;
@@ -77,44 +43,43 @@ persistent actor Backend {
     };
   };
 
+  transient let bitcoinCanisterId : Text = switch (network) {
+    case (#mainnet) "ghsi2-tqaaa-aaaan-aaaca-cai";
+    case _ "g4xu7-jiaaa-aaaan-aaaaq-cai";
+  };
+
+  transient let networkText : Text = switch (network) {
+    case (#mainnet) "mainnet";
+    case (#testnet) "testnet";
+    case (#regtest) "regtest";
+  };
+
+  private func getBitcoinCanister() : BitcoinCanister {
+    actor (bitcoinCanisterId) : BitcoinCanister;
+  };
+
+  // Minimum cycles required for bitcoin_get_balance
+  // (100M for mainnet, 40M for testnet/regtest).
+  // See https://docs.internetcomputer.org/references/bitcoin-how-it-works
+  transient let getBalanceCost : Nat = switch (network) {
+    case (#mainnet) 100_000_000;
+    case _ 40_000_000;
+  };
+
   /// Get the balance of a Bitcoin address in satoshis.
   public func get_balance(address : BitcoinAddress) : async Satoshi {
-    await management_canister.bitcoin_get_balance({
+    await (with cycles = getBalanceCost) getBitcoinCanister().bitcoin_get_balance({
       address;
-      network = getNetwork();
+      network;
       min_confirmations = null;
     });
   };
 
-  /// Get the UTXOs for a Bitcoin address.
-  public func get_utxos(address : BitcoinAddress) : async GetUtxosResponse {
-    await management_canister.bitcoin_get_utxos({
-      address;
-      network = getNetwork();
-      filter = null;
-    });
-  };
-
-  /// Get the current Bitcoin fee percentiles.
-  public func get_fee_percentiles() : async [MillisatoshiPerVByte] {
-    await management_canister.bitcoin_get_current_fee_percentiles({
-      network = getNetwork();
-    });
-  };
-
-  /// Get information about the Bitcoin canister configuration.
-  public query func get_bitcoin_info() : async BitcoinInfo {
-    let network = getNetwork();
-    let networkText = switch (network) {
-      case (#mainnet) "Mainnet";
-      case (#testnet) "Testnet";
-      case (#regtest) "Regtest";
+  /// Get the canister's Bitcoin configuration.
+  public query func get_config() : async BitcoinConfig {
+    {
+      network = networkText;
+      bitcoin_canister_id = bitcoinCanisterId;
     };
-    { network = networkText };
-  };
-
-  /// Simple greeting function to verify the canister is working.
-  public query func greet(name : Text) : async Text {
-    "Hello, " # name # "! This canister supports Bitcoin integration.";
   };
 };

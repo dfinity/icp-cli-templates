@@ -4,13 +4,18 @@ canisters:
   - backend
 
 networks:
-  # Local network with Bitcoin integration via Docker Compose
   - name: local
     mode: managed
-    compose:
-      file: docker-compose.bitcoin.yml
-      gateway-service: icp-network
-
+{% if network_type == "Docker" -%}
+    image: ghcr.io/dfinity/icp-cli-network-launcher
+    port-mapping:
+      - 0:4943
+    args:
+      - "--bitcoind-addr=host.docker.internal:18444"
+{% else -%}
+    bitcoind-addr:
+      - "127.0.0.1:18444"
+{% endif %}
 environments:
   - name: local
     network: local
@@ -18,3 +23,17 @@ environments:
       backend:
         environment_variables:
           BITCOIN_NETWORK: "regtest"
+
+  - name: staging
+    network: ic
+    settings:
+      backend:
+        environment_variables:
+          BITCOIN_NETWORK: "testnet"
+
+  - name: production
+    network: ic
+    settings:
+      backend:
+        environment_variables:
+          BITCOIN_NETWORK: "mainnet"
