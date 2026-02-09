@@ -3,16 +3,19 @@
 canisters:
   - backend
 
+{% if network_type == "Docker" -%}
 networks:
   - name: local
     mode: managed
-{% if network_type == "Docker" -%}
     image: ghcr.io/dfinity/icp-cli-network-launcher
     port-mapping:
       - 0:4943
     args:
       - "--bitcoind-addr=host.docker.internal:18444"
 {% else -%}
+networks:
+  - name: local
+    mode: managed
     bitcoind-addr:
       - "127.0.0.1:18444"
 {% endif %}
