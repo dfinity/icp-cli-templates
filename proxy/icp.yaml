@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v0.1.0/docs/schemas/icp-yaml-schema.json
+
+canisters:
+  - name: proxy
+    build:
+      steps:
+        - type: pre-built
+          url: https://github.com/dfinity/proxy-canister/releases/download/v0.1.0/proxy.wasm
