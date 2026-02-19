@@ -3,10 +3,9 @@
 canisters:
   - name: {{project-name}}
     recipe:
-      type: "@dfinity/motoko@v3.0.0"
+      type: "@dfinity/motoko@v4.1.0"
       configuration:
         main: src/main.mo
-        args: --incremental-gc
         # optional
         candid: {{project-name}}.did
 
