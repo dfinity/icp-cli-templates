@@ -14,7 +14,7 @@ The [`icp.yaml`](./icp.yaml) file configures a canister using the `asset-caniste
 canisters:
   - name: frontend
     recipe:
-      type: "@dfinity/asset-canister@v2.1.0"
+      type: "@dfinity/asset-canister@<version>"
       configuration:
         build:
           - npm run build
@@ -23,7 +23,7 @@ canisters:
 
 ### Key Components
 
-- **`type: asset-canister`**: Uses the asset-canister recipe for hosting static files
+- **`type: "@dfinity/asset-canister@<version>"`**: Uses the asset-canister recipe for hosting static files. See [available versions](https://github.com/dfinity/icp-cli-recipes/releases?q=asset-canister&expanded=true).
 - **`build`**: Specifies the build commands to run before uploading assets
 - **`dir`**: Specifies the directory containing the built assets to upload
 
@@ -38,10 +38,10 @@ canisters:
 
 ## How It Works
 
-1. ICP-CLI uses the `asset-canister` recipe to expand the build a sync steps of the canister.
-2. The build command (`npm run build`) will use vite to compile and bundles assets in to the `dist` directory.
+1. ICP-CLI uses the `asset-canister` recipe to expand the build and sync steps of the canister.
+2. The build command (`npm run build`) uses Vite to compile and bundle assets into the `dist` directory.
 3. The asset canister is deployed.
-4. The contents of `dist` directory are synchronized to the asset canister.
+4. The contents of the `dist` directory are synchronized to the asset canister.
 
 ## Prerequisites
 
@@ -55,23 +55,23 @@ canisters:
 - Frontend applications built with Vite
 - Projects that don't require a backend canister
 
-## Run it
+## Run It
 
-```
-# install dependencies:
+```bash
+# Install dependencies:
 # Vite is required for this example to bundle assets
 npm ci
 
-# start a local network
-icp network start --background
+# Start a local network
+icp network start -d
 
-# build and deploy the canister
+# Build and deploy the canister
 icp deploy
 
 # Open the deployed frontend in a browser using the canister ID from the output of
-# `icp deploy`: `http://<frontend_canister_id>.localhost:8000/`
+# `icp deploy`: http://<frontend_canister_id>.localhost:8000/
 
-# stop the network
+# Stop the network
 icp network stop
 ```
 
