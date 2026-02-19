@@ -2,6 +2,7 @@
 sub_templates = [
   "hello-world",
   "motoko",
+  "proxy",
   "rust",
   "static-website",
 ]
