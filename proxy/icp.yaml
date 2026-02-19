@@ -6,3 +6,4 @@ canisters:
       steps:
         - type: pre-built
           url: https://github.com/dfinity/proxy-canister/releases/download/v0.1.0/proxy.wasm
+          sha256: 499dc190e4c0c3b112746f25f993c7a4ca85e0ae73c8987ef87c700da74dc5d3
