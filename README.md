@@ -23,3 +23,7 @@ icp new <project-name> --subfolder <template-name>
 | [hello-world](./hello-world/) | Full-stack dapp with a frontend and backend canister (Rust or Motoko) |
 | [static-website](./static-website/) | A static website deployed to an asset canister |
 | [proxy](./proxy/) | A pre-built proxy canister that forwards HTTP requests to external URLs |
+
+## Contributing
+
+See the [Contributing Guide](.github/CONTRIBUTING.md) for guidelines on adding or modifying templates.
