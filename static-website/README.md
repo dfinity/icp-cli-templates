@@ -17,6 +17,7 @@ canisters:
       type: "@dfinity/asset-canister@<version>"
       configuration:
         build:
+          - npm install
           - npm run build
         dir: dist
 ```
@@ -58,10 +59,6 @@ canisters:
 ## Run It
 
 ```bash
-# Install dependencies:
-# Vite is required for this example to bundle assets
-npm ci
-
 # Start a local network
 icp network start -d
 

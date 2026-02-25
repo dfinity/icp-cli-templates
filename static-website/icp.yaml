@@ -6,5 +6,8 @@ canisters:
       type: "@dfinity/asset-canister@v2.1.0"
       configuration:
         build:
+          # Install the dependencies
+          # Eventually you might want to use `npm ci` to lock your dependencies
+          - npm install
           - npm run build
         dir: dist
