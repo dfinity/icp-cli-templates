@@ -18,6 +18,7 @@ icp new <project-name> --subfolder <template-name>
 
 | Template | Description |
 | --- | --- |
+| [bitcoin](./bitcoin/) | Bitcoin integration with balance reading (Rust or Motoko) |
 | [motoko](./motoko/) | A basic Motoko canister |
 | [rust](./rust/) | A basic Rust canister |
 | [hello-world](./hello-world/) | Full-stack dapp with a frontend and backend canister (Rust or Motoko) |
