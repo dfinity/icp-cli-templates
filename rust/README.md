@@ -14,7 +14,7 @@ The [`icp.yaml`](./icp.yaml) file configures a canister using the built-in `rust
 canisters:
   - name: backend
     recipe:
-      type: "@dfinity/rust@v3.0.0"
+      type: "@dfinity/rust@<version>"
       configuration:
         # cargo package for canister (required field)
         package: backend
@@ -28,14 +28,14 @@ canisters:
 
 ### Key Components
 
-- **`type: rust`**: Uses the built-in Rust recipe type
+- **`type: "@dfinity/rust@<version>"`**: Uses the built-in Rust recipe type. See [available versions](https://github.com/dfinity/icp-cli-recipes/releases?q=rust&expanded=true).
 - **`package`**: Specifies the Cargo package name to build (required)
 
 ## Project Structure
 
 - [`Cargo.toml`](./Cargo.toml): Cargo project configuration with WASM target setup
 - [`src/lib.rs`](./src/lib.rs): Rust canister implementation using ic-cdk
-- [`.gitignore`](./gitignore): Git ignore rules for Rust projects
+- [`.gitignore`](./.gitignore): Git ignore rules for Rust projects
 
 ## How It Works
 
@@ -68,18 +68,18 @@ The recipe automatically:
 - Canisters that don't require custom build logic
 - Multi-package Rust workspaces
 
-## Run it
+## Run It
 
-### Using the local network
+### Using the Local Network
 
-```
+```bash
 # Start a local network
-icp network start --background
+icp network start -d
 
 # Build and deploy the canister
 icp deploy
 
-# make a call the canister
+# Call the canister
 icp canister call backend greet '("Internet Computer")'
 
 # Stop the network

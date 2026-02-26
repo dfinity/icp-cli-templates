@@ -1,7 +1,9 @@
 [template]
 sub_templates = [
-  "motoko",
-  "rust",
   "hello-world",
   "bitcoin",
+  "motoko",
+  "proxy",
+  "rust",
+  "static-website",
 ]

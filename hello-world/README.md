@@ -1,6 +1,6 @@
-# Frontend Environment Variables Example
+# Hello World
 
-This example demonstrates how to pass environment variables from the asset canister to the frontend webapp.
+This example demonstrates a full-stack dapp with a frontend and backend canister, showing how to pass environment variables from the asset canister to the frontend webapp.
 
 ## Overview
 
@@ -11,7 +11,7 @@ This project consists of two canisters:
 
 ### Bindings Generation
 
-The [`@icp-sdk/bindgen`](https://npmjs.com/package/@icp-sdk/bindgen) library offers a plugin for Vite that generates the TypeScript Candid bindings from the [`backend.did`](./backend/dist/hello_world.did) file. The bindings are generated at build time by Vite and are saved in the [`frontend/app/src/backend/api/`](./frontend/app/src/backend/api/) folder.
+The [`@icp-sdk/bindgen`](https://npmjs.com/package/@icp-sdk/bindgen) library offers a plugin for Vite that generates the TypeScript Candid bindings from the [`backend.did`](./backend/backend.did) file. The bindings are generated at build time by Vite and are saved in the [`frontend/app/src/backend/api/`](./frontend/app/src/backend/api/) folder.
 
 The plugin supports hot module replacement, so you can run the frontend in development mode (by running `npm run dev` in the [`frontend/app/`](./frontend/app/) folder) and make changes to the Candid declaration file to see the bindings being updated in real time.
 
@@ -35,12 +35,12 @@ Before you begin, ensure that you have the following installed:
 - [Node.js](https://nodejs.org/)
 - [npm](https://docs.npmjs.com/)
 
-## Instructions
+## Run It
 
 First, start a local network:
 
 ```bash
-icp network run --background
+icp network start -d
 ```
 
 Then, deploy both canisters:
@@ -51,7 +51,7 @@ icp deploy
 
 This command will output something like this:
 
-```bash
+```
 Syncing canisters:
 [backend] ✔ Synced successfully: uqqxf-5h777-77774-qaaaa-cai
 [frontend] ✔ Synced successfully: uxrrr-q7777-77774-qaaaq-cai # <- copy this canister id

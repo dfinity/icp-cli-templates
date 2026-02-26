@@ -2,26 +2,17 @@
 
 name: frontend
 
-build:
-  steps:
-    - type: pre-built
-      url: https://github.com/dfinity/sdk/raw/89243f2268b6d0ec77d589b7b1b27af931f70edd/src/distributed/assetstorage.wasm.gz
-      sha256: b312a16c3179cf8384afa852e468c1333b7439d4c5a39f26df69b12320f629f8
-
-    - type: script
-      command: npm ci
-
+recipe:
+  # https://github.com/dfinity/icp-cli-recipes/blob/main/recipes/asset-canister/README.md
+  type: "@dfinity/asset-canister@v2.1.0"
+  configuration:
+    build:
+      # Install the dependencies
+      # Eventually you might want to use `npm ci` to lock your dependencies
+      - npm install
       # Generate the bindings from backend.did file in the backend canister
       # You could choose to run this once manually and checkin the generated code
       # instead of running it every single time
-    - type: script
-      command:  npm run generate --prefix app 
-
-    - type: script
-      command: npm run build
-
-sync:
-  steps:
-    - type: assets
-      dirs:
-        - app/dist
+      - npm run generate --prefix app
+      - npm run build
+    dir: app/dist
