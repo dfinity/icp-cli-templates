@@ -1,0 +1,13 @@
+type satoshi = nat64;
+
+type bitcoin_address = text;
+
+type bitcoin_config = record {
+  network : text;
+  bitcoin_canister_id : text;
+};
+
+service : {
+  "get_balance" : (bitcoin_address) -> (satoshi);
+  "get_config" : () -> (bitcoin_config) query;
+}
