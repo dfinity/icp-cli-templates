@@ -22,7 +22,7 @@ icp new <project-name> --subfolder <template-name>
 | [motoko](./motoko/) | A basic Motoko canister |
 | [rust](./rust/) | A basic Rust canister |
 | [bitcoin-starter](./bitcoin-starter/) | Bitcoin integration with balance reading (Rust or Motoko) |
-| [proxy](./proxy/) | A pre-built proxy canister that forwards HTTP requests to external URLs |
+| [proxy](./proxy/) | A pre-built proxy canister for use with `icp canister call --proxy` |
 | [static-website](./static-website/) | A static website deployed to an asset canister |
 
 ## Contributing
