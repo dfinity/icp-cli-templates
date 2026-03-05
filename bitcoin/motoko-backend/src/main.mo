@@ -2,7 +2,7 @@
 ///
 /// Demonstrates reading Bitcoin balance via the Bitcoin canister API.
 
-import Prim "mo:⛔";
+import Runtime "mo:core/Runtime";
 import Text "mo:core/Text";
 
 persistent actor Backend {
@@ -31,7 +31,7 @@ persistent actor Backend {
   // Resolved once at init/upgrade (actor body has system capability).
   // Environment variables are set at deploy time, so this is safe.
   transient let network : Network = do {
-    switch (Prim.envVar<system>("BITCOIN_NETWORK")) {
+    switch (Runtime.envVar("BITCOIN_NETWORK")) {
       case (?value) {
         switch (Text.toLower(value)) {
           case ("mainnet") #mainnet;
