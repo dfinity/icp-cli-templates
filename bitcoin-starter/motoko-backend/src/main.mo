@@ -50,17 +50,9 @@ persistent actor Backend {
     };
   };
 
-  private func networkToText(network : Network) : Text {
-    switch (network) {
-      case (#mainnet) "mainnet";
-      case (#testnet) "testnet";
-      case (#regtest) "regtest";
-    };
-  };
-
   // Minimum cycles required for bitcoin_get_balance
   // (100M for mainnet, 40M for testnet/regtest).
-  // See https://docs.internetcomputer.org/references/bitcoin-how-it-works
+  // See https://docs.internetcomputer.org/references/bitcoin-how-it-works#api-fees-and-pricing
   private func getBalanceCost(network : Network) : Nat {
     switch (network) {
       case (#mainnet) 100_000_000;
@@ -79,11 +71,18 @@ persistent actor Backend {
   };
 
   /// Get the canister's Bitcoin configuration.
+  // Note: Runtime.envVar requires `system` capability which is not
+  // available in Motoko query functions, so we use a cached value here.
+  transient let cachedNetwork : Network = getNetwork();
+
   public query func get_config() : async BitcoinConfig {
-    let network = getNetwork();
     {
-      network = networkToText(network);
-      bitcoin_canister_id = getBitcoinCanisterId(network);
+      network = switch (cachedNetwork) {
+        case (#mainnet) "mainnet";
+        case (#testnet) "testnet";
+        case (#regtest) "regtest";
+      };
+      bitcoin_canister_id = getBitcoinCanisterId(cachedNetwork);
     };
   };
 };
