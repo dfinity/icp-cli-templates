@@ -30,7 +30,7 @@ persistent actor Backend {
 
   // The BITCOIN_NETWORK env var (and thus the targeted Bitcoin network)
   // can be changed at runtime without redeploying the canister.
-  private func getNetwork() : Network {
+  private func getNetwork<system>() : Network {
     switch (Runtime.envVar("BITCOIN_NETWORK")) {
       case (?value) {
         switch (Text.toLower(value)) {
