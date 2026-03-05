@@ -7,6 +7,8 @@ use ic_cdk::bitcoin_canister::{
     bitcoin_get_balance, get_bitcoin_canister_id, GetBalanceRequest, Network, Satoshi,
 };
 
+// The BITCOIN_NETWORK env var (and thus the targeted Bitcoin network)
+// can be changed at runtime without redeploying the canister.
 fn get_network() -> Network {
     let network_str = if ic_cdk::api::env_var_name_exists("BITCOIN_NETWORK") {
         ic_cdk::api::env_var_value("BITCOIN_NETWORK").to_lowercase()
