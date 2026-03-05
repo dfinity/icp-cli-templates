@@ -1,7 +1,7 @@
 [template]
 sub_templates = [
   "hello-world",
-  "bitcoin",
+  "bitcoin-starter",
   "motoko",
   "proxy",
   "rust",

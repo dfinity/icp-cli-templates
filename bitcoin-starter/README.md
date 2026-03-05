@@ -1,4 +1,4 @@
-# Bitcoin Integration Template
+# Bitcoin Starter Template
 
 Demonstrates reading Bitcoin balance from a canister on the Internet Computer using the [Bitcoin canister API](https://github.com/dfinity/bitcoin-canister/blob/master/INTERFACE_SPECIFICATION.md).
 

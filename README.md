@@ -21,7 +21,7 @@ icp new <project-name> --subfolder <template-name>
 | [hello-world](./hello-world/) | Full-stack dapp with a frontend and backend canister (Rust or Motoko) |
 | [motoko](./motoko/) | A basic Motoko canister |
 | [rust](./rust/) | A basic Rust canister |
-| [bitcoin](./bitcoin/) | Bitcoin integration with balance reading (Rust or Motoko) |
+| [bitcoin-starter](./bitcoin-starter/) | Bitcoin integration with balance reading (Rust or Motoko) |
 | [proxy](./proxy/) | A pre-built proxy canister that forwards HTTP requests to external URLs |
 | [static-website](./static-website/) | A static website deployed to an asset canister |
 
