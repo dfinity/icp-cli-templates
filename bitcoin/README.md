@@ -106,10 +106,9 @@ Bitcoin canister API calls require cycles. The canister must attach cycles when 
 | `bitcoin_get_utxos` | 4,000,000,000 | 10,000,000,000 |
 | `bitcoin_send_transaction` | 2,000,000,000 | 5,000,000,000 |
 
-See [Bitcoin API costs](https://docs.internetcomputer.org/references/bitcoin-how-it-works) for the full reference.
+See [Bitcoin API costs](https://docs.internetcomputer.org/references/bitcoin-how-it-works#api-fees-and-pricing) for the full reference.
 
 ## Learn More
 
 - [Bitcoin Canister API Specification](https://github.com/dfinity/bitcoin-canister/blob/master/INTERFACE_SPECIFICATION.md) — full API reference (get_utxos, send_transaction, fee percentiles, etc.)
-- [Internet Computer Bitcoin Integration](https://internetcomputer.org/docs/building-apps/bitcoin/overview)
-- [icp-cli Documentation](https://github.com/dfinity/icp-cli)
+- [Developer Docs](https://docs.internetcomputer.org/build-on-btc) - How to build on Bitcoin
