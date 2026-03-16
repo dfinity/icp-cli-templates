@@ -1,18 +1,3 @@
-# Various IDEs and Editors
-.vscode/
-.idea/
-**/*~
-
-# Mac OSX temporary files
-.DS_Store
-**/.DS_Store
-
-# environment variables
-.env
-
-# rust
-target/
-
 # icp-cli local cache (safe to delete, rebuilt on next build/deploy)
 .icp/cache/
 # Do NOT ignore .icp/data/ — it stores mainnet canister ID mappings.
