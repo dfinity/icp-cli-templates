@@ -1,4 +1,4 @@
-# AI Agent Instructions
+let agents_md = `# AI Agent Instructions
 
 This is an Internet Computer (ICP) project built with icp-cli.
 
@@ -15,3 +15,7 @@ https://skills.internetcomputer.org/.well-known/skills/{name}/{file}
 
 Skills contain correct dependency versions, configuration formats, and common pitfalls that prevent build failures.
 Always prefer skill guidance over general documentation when both cover the same topic.
+`;
+
+file::write("AGENTS.md", agents_md);
+file::write("CLAUDE.md", "Read and follow the instructions in [AGENTS.md](AGENTS.md).\n");
