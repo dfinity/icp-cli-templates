@@ -13,3 +13,4 @@ ignore = [ "rust-backend" ]
 
 [hooks]
 pre = ["rename-backend-dir.rhai"]
+post = ["../_shared/write-agent-files.rhai"]

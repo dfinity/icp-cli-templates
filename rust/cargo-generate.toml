@@ -1,3 +1,6 @@
 [placeholders]
 network_type = { type = "string", prompt = "Use the default network or a dockerized one?", choices = ["Default", "Docker"], default = "Default" }
 
+
+[hooks]
+post = ["../_shared/write-agent-files.rhai"]

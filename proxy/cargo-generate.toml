@@ -1,5 +1,2 @@
-[template]
-exclude = ["public/logo.png"]
-
 [hooks]
 post = ["../_shared/write-agent-files.rhai"]
