@@ -1,5 +1,5 @@
 {
-  "name": "MotokoVue_frontend",
+  "name": "frontend",
   "version": "0.0.0",
   "scripts": {
     "build": "vite build",
@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@icp-sdk/bindgen": "^0.4.0",
+    "@types/node": "^25.9.1",
     "@vitejs/plugin-vue": "~6.0.7",
     "@vue/tsconfig": "^0.9.1",
     "sass-embedded": "^1.99.0",

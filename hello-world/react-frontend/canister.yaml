@@ -11,4 +11,4 @@ recipe:
       # Eventually you might want to use `npm ci` to lock your dependencies
       - npm install
       - npm run build
-    dir: app/dist
+    dir: dist
