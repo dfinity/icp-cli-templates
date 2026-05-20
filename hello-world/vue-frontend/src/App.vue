@@ -28,6 +28,8 @@ async function handleSubmit(event) {
         <div className="brand" aria-label="ICP plus Vite">
           <img src="/icp.svg" alt="ICP logo" className="brand-icp" />
           <span className="plus">+</span>
+          <img src="/vue.svg" alt="Vite logo" className="brand-framework" />
+          <span className="plus">+</span>
           <img src="/vite.svg" alt="Vite logo" className="brand-vite" />
         </div>
         <h1 className="title">Hello World</h1>
