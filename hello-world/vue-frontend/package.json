@@ -1,0 +1,21 @@
+{
+  "name": "MotokoVue_frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@icp-sdk/core": "^5.4.0",
+    "pinia": "^3.0.4",
+    "vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@icp-sdk/bindgen": "^0.4.0",
+    "@vitejs/plugin-vue": "~6.0.7",
+    "@vue/tsconfig": "^0.9.1",
+    "sass-embedded": "^1.99.0",
+    "vite": "~7.1.11"
+  }
+}

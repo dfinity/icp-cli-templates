@@ -1,7 +1,7 @@
 [placeholders]
 backend_type = { type = "string", prompt = "What's your backend weapon of choice?", choices = ["motoko", "rust"], default = "motoko" }
 # We're only supporting react at the moment, so this variable is not really used
-frontend_type = { type = "string", prompt = "Pick a frontend framework:", choices = ["react"], default = "react" }
+frontend_type = { type = "string", prompt = "Pick a frontend framework:", choices = ["react", "vue"], default = "react" }
 network_type = { type = "string", prompt = "Use the default network or a dockerized one?", choices = ["Default", "Docker"], default = "Default" }
 
 [conditional.'backend_type == "rust"']
@@ -10,6 +10,12 @@ ignore = [ "motoko-backend" ]
 [conditional.'backend_type == "motoko"']
 ignore = [ "rust-backend" ]
 
+[conditional.'frontend_type == "react"']
+ignore = [ "vue-frontend" ]
+
+[conditional.'frontend_type == "vue"']
+ignore = [ "react-frontend" ]
+
 [hooks]
-pre = ["rename-backend-dir.rhai"]
+pre = ["rename-dirs.rhai"]
 post = ["../_shared/write-agent-files.rhai"]
