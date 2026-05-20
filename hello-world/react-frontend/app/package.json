@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "generate": "icp-bindgen --did-file ../../backend/backend.did --out-dir ./src/backend/api --force",
-    "build": "tsc -b && vite build",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -17,7 +16,7 @@
   },
   "devDependencies": {
     "@eslint/js": "~9.33.0",
-    "@icp-sdk/bindgen": "~0.3.0",
+    "@icp-sdk/bindgen": "^0.4.0",
     "@types/react": "~19.1.10",
     "@types/react-dom": "~19.1.7",
     "@vitejs/plugin-react": "~5.0.0",
