@@ -4,8 +4,6 @@ canisters:
   - name: {{project-name}}
     recipe:
       type: "@dfinity/motoko@v5.0.0"
-      configuration:
-        name: {{project-name}}
 
 {% if network_type == "Docker" -%}
 networks:
