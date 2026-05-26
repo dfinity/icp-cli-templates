@@ -2,7 +2,6 @@
 
 name: backend
 recipe:
-  type: "@dfinity/motoko@v4.1.0"
+  type: "@dfinity/motoko@v5.0.0"
   configuration:
-    main: src/main.mo
-    candid: backend.did
+    name: backend
