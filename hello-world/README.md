@@ -1,6 +1,6 @@
 # Hello World
 
-This example demonstrates a full-stack dapp with a frontend and backend canister, showing how to pass environment variables from the asset canister to the frontend webapp.
+This example demonstrates a full-stack app with a frontend and backend canister, showing how to pass environment variables from the asset canister to the frontend webapp.
 
 ## Overview
 

@@ -3,7 +3,8 @@
 canisters:
   - name: frontend
     recipe:
-      type: "@dfinity/asset-canister@v2.1.0"
+      # IMPORTANT: This recipe requires icp-cli >= 0.2.7
+      type: "@dfinity/asset-canister@v2.2.0"
       configuration:
         build:
           # Install the dependencies
