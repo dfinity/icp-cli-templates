@@ -5,7 +5,7 @@ name: frontend
 recipe:
   # https://github.com/dfinity/icp-cli-recipes/blob/main/recipes/asset-canister/README.md
   # IMPORTANT: This recipe requires icp-cli >= 0.2.7
-  type: "@dfinity/asset-canister@v2.2.0"
+  type: "@dfinity/asset-canister@v2.2.1"
   configuration:
     build:
       # Install the dependencies
