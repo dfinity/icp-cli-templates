@@ -1,8 +1,7 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { createActor } from "./bindings/backend";
-import { safeGetCanisterEnv } from "@icp-sdk/core/agent/canister-env";
-
+import { getCanisterEnv } from "@icp-sdk/core/agent/canister-env";
 
 // Here we define the environment variables that the asset canister serves.
 // By default, the CLI sets all the canister IDs in the environment variables of the asset canister
@@ -20,7 +19,7 @@ interface CanisterEnv {
 const canisterEnv = getCanisterEnv<CanisterEnv>();
 const canisterId = canisterEnv["PUBLIC_CANISTER_ID:backend"];
 
-// We always use the rootkey that is coming back from the cookie in the asset canister
+// We always use the root key that is coming back from the cookie in the asset canister
 const helloWorldActor = createActor(canisterId, {
   agentOptions: {
     rootKey: canisterEnv.IC_ROOT_KEY,
@@ -31,7 +30,7 @@ const greeting = ref("");
 
 async function handleSubmit(event) {
   const name = event.target.elements.name.value;
-  greeting.value = await actor.greet(name);
+  greeting.value = await helloWorldActor.greet(name);
 }
 
 </script>

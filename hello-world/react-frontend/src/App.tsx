@@ -19,7 +19,7 @@ interface CanisterEnv {
 const canisterEnv = getCanisterEnv<CanisterEnv>();
 const canisterId = canisterEnv["PUBLIC_CANISTER_ID:backend"];
 
-// We always use the rootkey that is coming back from the cookie in the asset canister
+// We always use the root key that is coming back from the cookie in the asset canister
 const helloWorldActor = createActor(canisterId, {
   agentOptions: {
     rootKey: canisterEnv.IC_ROOT_KEY,
