@@ -12,10 +12,10 @@ interface CanisterEnv {
 }
 
 // We only want to access the environment variables when serving the frontend from the asset canister.
-// `getCanisterEnv` will retrive the environment variables and the root key from the cookie returned
-// by the asset canister
-// When developing locally, the vite server will inject the cookie into the responses
-// see vite.config.ts
+// `getCanisterEnv` will retrieve the environment variables and the root key from the cookie returned
+// by the asset canister.
+// When developing locally, the Vite server will inject the cookie into the responses.
+// See vite.config.ts.
 const canisterEnv = getCanisterEnv<CanisterEnv>();
 const canisterId = canisterEnv["PUBLIC_CANISTER_ID:backend"];
 
