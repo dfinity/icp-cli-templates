@@ -1,12 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { createActor } from "./bindings/backend";
-import { safeGetCanisterEnv } from "@icp-sdk/core/agent/canister-env";
+import { getCanisterEnv } from "@icp-sdk/core/agent/canister-env";
 
-const canisterEnv = safeGetCanisterEnv();
-const canisterId = canisterEnv?.["PUBLIC_CANISTER_ID:backend"];
+// Here we define the environment variables that the asset canister serves.
+// By default, the CLI sets all the canister IDs in the environment variables of the asset canister
+// using the `PUBLIC_CANISTER_ID:<canister-name>` format.
+// For this reason, we can expect the `PUBLIC_CANISTER_ID:backend` environment variable to be set.
+interface CanisterEnv {
+  readonly "PUBLIC_CANISTER_ID:backend": string;
+}
 
-const actor = createActor(canisterId, {
+// We only want to access the environment variables when serving the frontend from the asset canister.
+// `getCanisterEnv` will retrieve the environment variables and the root key from the cookie returned
+// by the asset canister.
+// When developing locally, the Vite server will inject the cookie into the responses.
+// See vite.config.ts.
+const canisterEnv = getCanisterEnv<CanisterEnv>();
+const canisterId = canisterEnv["PUBLIC_CANISTER_ID:backend"];
+
+// We always use the root key that is coming back from the cookie in the asset canister
+const helloWorldActor = createActor(canisterId, {
   agentOptions: {
     rootKey: canisterEnv.IC_ROOT_KEY,
   },
@@ -16,7 +30,7 @@ const greeting = ref("");
 
 async function handleSubmit(event) {
   const name = event.target.elements.name.value;
-  greeting.value = await actor.greet(name);
+  greeting.value = await helloWorldActor.greet(name);
 }
 
 </script>

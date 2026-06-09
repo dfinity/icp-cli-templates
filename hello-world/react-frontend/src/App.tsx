@@ -12,15 +12,17 @@ interface CanisterEnv {
 }
 
 // We only want to access the environment variables when serving the frontend from the asset canister.
-// In development mode, we use a fixed canister ID for the backend canister.
+// `getCanisterEnv` will retrieve the environment variables and the root key from the cookie returned
+// by the asset canister.
+// When developing locally, the Vite server will inject the cookie into the responses.
+// See vite.config.ts.
 const canisterEnv = getCanisterEnv<CanisterEnv>();
 const canisterId = canisterEnv["PUBLIC_CANISTER_ID:backend"];
 
-// We want to fetch the root key from the replica when developing locally.
+// We always use the root key that is coming back from the cookie in the asset canister
 const helloWorldActor = createActor(canisterId, {
   agentOptions: {
-    rootKey: !import.meta.env.DEV ? canisterEnv!.IC_ROOT_KEY : undefined,
-    shouldFetchRootKey: import.meta.env.DEV,
+    rootKey: canisterEnv.IC_ROOT_KEY,
   },
 });
 
