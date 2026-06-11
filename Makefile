@@ -11,5 +11,11 @@ FILTER ?=
 test-image:
 	docker build -t $(IMAGE) tests
 
+# Named volumes keep dependency caches warm across local runs.
+CACHE_VOLUMES = \
+	-v $(IMAGE)-cargo:/usr/local/cargo/registry \
+	-v $(IMAGE)-npm:/root/.npm \
+	-v $(IMAGE)-cache:/root/.cache
+
 test: test-image
-	docker run --rm -v "$(CURDIR)":/repo:ro $(IMAGE) /repo/tests/run.sh $(FILTER)
+	docker run --rm -v "$(CURDIR)":/repo:ro $(CACHE_VOLUMES) $(IMAGE) /repo/tests/run.sh $(FILTER)
