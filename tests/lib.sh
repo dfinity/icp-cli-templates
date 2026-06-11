@@ -93,15 +93,74 @@ http_check() {
   [ -s /tmp/frontend-body ] || fail "frontend returned an empty body"
 }
 
-# first_canister_name <project-dir>
-# Reads the first canister's name from the rendered icp.yaml. Entries are
-# either inline objects (`name: backend`) or paths to canister.yaml files.
-first_canister_name() {
-  local dir="$1" entry
-  entry="$(yq -r '.canisters[0]' "$dir/icp.yaml")"
-  if [ "$(yq -r '.canisters[0] | type' "$dir/icp.yaml")" = "!!map" ]; then
-    yq -r '.canisters[0].name' "$dir/icp.yaml"
-  else
-    yq -r '.name' "$dir/$entry/canister.yaml"
-  fi
+# canister_specs <project-dir>
+# Prints one "name<TAB>recipe-type" line per canister in the rendered
+# project. icp.yaml entries are either inline objects (`name: ...`) or paths
+# to directories containing a canister.yaml.
+canister_specs() {
+  local dir="$1" count i entry
+  count="$(yq -r '.canisters | length' "$dir/icp.yaml")"
+  for ((i = 0; i < count; i++)); do
+    if [ "$(yq -r ".canisters[$i] | type" "$dir/icp.yaml")" = "!!map" ]; then
+      yq -r ".canisters[$i] | .name + \"\t\" + .recipe.type" "$dir/icp.yaml"
+    else
+      entry="$(yq -r ".canisters[$i]" "$dir/icp.yaml")"
+      [ -f "$dir/$entry/canister.yaml" ] \
+        || fail "icp.yaml references '$entry' but $entry/canister.yaml is missing"
+      yq -r '.name + "\t" + .recipe.type' "$dir/$entry/canister.yaml"
+    fi
+  done
+}
+
+# verify_canisters <project-dir>
+# Exercises every deployed canister: asset canisters get the HTTP check,
+# everything else gets the greet call.
+verify_canisters() {
+  local dir="$1" name type
+  while IFS=$'\t' read -r name type; do
+    case "$type" in
+      *asset-canister*) http_check "$name" ;;
+      *) call_greet "$name" ;;
+    esac
+  done < <(canister_specs "$dir")
+}
+
+# assert_hello_world_layout <project-dir>
+# The hello-world pre-hook renames the chosen variant dirs to backend/ and
+# frontend/; the cargo-generate conditionals drop the unchosen ones.
+assert_hello_world_layout() {
+  local dir="$1" leftover
+  [ -d "$dir/backend" ] || fail "hello-world: backend/ directory missing after render"
+  [ -d "$dir/frontend" ] || fail "hello-world: frontend/ directory missing after render"
+  for leftover in rust-backend motoko-backend react-frontend vue-frontend; do
+    [ ! -e "$dir/$leftover" ] || fail "hello-world: unexpected leftover directory $leftover/"
+  done
+}
+
+# run_permutation <id> <template> [key=value ...]
+# Runs the full flow for one matrix entry in its own project dir under
+# $WORKDIR. Always attempts to stop the permutation's network afterwards so
+# sequential runs don't fight over the gateway port.
+run_permutation() {
+  local id="$1" template="$2"
+  shift 2
+  local project="e2e-$(printf '%s' "$id" | tr ':' '-')"
+  local dir="$WORKDIR/$project" rc=0
+  mkdir -p "$dir"
+
+  (
+    cd "$dir"
+    local dargs=() kv
+    for kv in "$@"; do dargs+=(-d "$kv"); done
+    render "$template" "$project" "${dargs[@]}"
+    [ "$template" = hello-world ] && assert_hello_world_layout "$project"
+    cd "$project"
+    build
+    network_start
+    deploy
+    verify_canisters .
+  ) || rc=$?
+
+  icp network stop --project-root-override "$dir/$project" >/dev/null 2>&1 || true
+  return $rc
 }

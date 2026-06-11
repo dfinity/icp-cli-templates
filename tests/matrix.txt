@@ -1,0 +1,11 @@
+# Template test matrix — one permutation per line:
+#   <template> [key=value ...]
+# Values are passed to `icp new` as -d defines; omitted variables use the
+# template defaults. The permutation id is the template name plus the values,
+# e.g. `hello-world:motoko:react`.
+rust
+motoko
+hello-world backend_type=motoko frontend_type=react
+hello-world backend_type=motoko frontend_type=vue
+hello-world backend_type=rust frontend_type=react
+hello-world backend_type=rust frontend_type=vue
