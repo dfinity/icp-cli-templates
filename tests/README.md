@@ -1,8 +1,8 @@
 # Template tests
 
 End-to-end tests that verify every template in this repo renders, builds,
-deploys, and serves traffic. For each permutation in [`matrix.txt`](./matrix.txt)
-the harness:
+deploys, and serves traffic. For each permutation in
+[`matrix.yaml`](./matrix.yaml) the harness:
 
 1. renders the template from the local checkout with `icp new` (the same code
    path end users take),
@@ -10,9 +10,10 @@ the harness:
 3. runs `icp build`,
 4. starts a local network (`icp network start -d`),
 5. runs `icp deploy`,
-6. calls `greet` on every backend canister and curls every asset canister
-   through the gateway (`http://<canister-name>.local.localhost:8000/`,
-   pinned to `127.0.0.1` via `curl --resolve`),
+6. runs the checks configured per canister in `matrix.yaml`: canister calls
+   with an expected reply, and/or a curl through the gateway
+   (`http://<canister-name>.local.localhost:8000/`, pinned to `127.0.0.1`
+   via `curl --resolve`, expecting HTTP 200),
 7. stops the network and cleans up.
 
 Tests always run inside a container, against the `icp` CLI pinned in the
@@ -45,18 +46,20 @@ The repo is mounted read-only and the harness copies only files git would
 track (tracked + untracked-but-not-ignored), so uncommitted template changes
 are tested while local build artifacts (`target/`, `node_modules/`) are not.
 
-## Adding a permutation
+## Adding a template or permutation
 
-Add a line to [`matrix.txt`](./matrix.txt):
+Everything is configured in [`matrix.yaml`](./matrix.yaml). Each template
+entry declares:
 
-```
-<template> [key=value ...]
-```
-
-`key=value` pairs are passed to `icp new` as `--define`; omitted template
-variables fall back to their defaults. The permutation id used for filtering
-and reporting is the template name plus the values, e.g.
-`hello-world:motoko:react`.
+- `permutations` — variable sets passed to `icp new` as `--define` (an empty
+  entry `{}` renders with the template defaults). Each one gets a test run;
+  the permutation id used for filtering and reporting is the template name
+  plus the values, e.g. `hello-world:motoko:react`.
+- `canisters` — what to verify after deploy, per canister: `curl: true` for
+  an HTTP 200 check through the gateway, and/or `call` with `method`, `args`,
+  and the `expect`-ed reply substring. A `name` of `{{project-name}}` is
+  replaced with the rendered project's name (for templates whose `icp.yaml`
+  uses that placeholder).
 
 ## CI
 

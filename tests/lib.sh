@@ -4,6 +4,7 @@
 # Repo root as mounted into the container (read-only).
 REPO="${REPO:-/repo}"
 GATEWAY_PORT=8000
+CONFIG="${CONFIG:-$(dirname "${BASH_SOURCE[0]}")/matrix.yaml}"
 
 # Never send icp telemetry from test runs.
 export DO_NOT_TRACK=1
@@ -81,15 +82,15 @@ deploy() {
   icp deploy || fail "icp deploy failed"
 }
 
-# call_greet <canister-name>
-call_greet() {
-  local canister="$1" reply
-  step "call: icp canister call $canister greet '(\"ICP\")'"
-  reply="$(icp canister call "$canister" greet '("ICP")')" \
+# call_check <canister-name> <method> <args> <expected-substring>
+call_check() {
+  local canister="$1" method="$2" args="$3" expect="$4" reply
+  step "call: icp canister call $canister $method '$args'"
+  reply="$(icp canister call "$canister" "$method" "$args")" \
     || fail "icp canister call failed"
   printf '%s\n' "$reply"
-  printf '%s' "$reply" | grep -qF 'Hello, ICP!' \
-    || fail "unexpected greet reply: $reply"
+  printf '%s' "$reply" | grep -qF "$expect" \
+    || fail "expected reply to contain '$expect', got: $reply"
 }
 
 # http_check <canister-name>
@@ -108,36 +109,34 @@ http_check() {
   [ -s /tmp/frontend-body ] || fail "frontend returned an empty body"
 }
 
-# canister_specs <project-dir>
-# Prints one "name<TAB>recipe-type" line per canister in the rendered
-# project. icp.yaml entries are either inline objects (`name: ...`) or paths
-# to directories containing a canister.yaml.
-canister_specs() {
-  local dir="$1" count i entry
-  count="$(yq -r '.canisters | length' "$dir/icp.yaml")"
+# verify_canisters <template> <project-name>
+# Runs the checks configured in matrix.yaml for each of the template's
+# canisters: a gateway curl if `curl: true`, a canister call if `call` is
+# configured (both, if both are present).
+verify_canisters() {
+  local template="$1" project="$2"
+  local base count i name
+  count="$(yq -r ".templates.\"$template\".canisters | length" "$CONFIG")"
+  [ "$count" -gt 0 ] 2>/dev/null \
+    || fail "no canister checks configured for template '$template' in $CONFIG"
+
   for ((i = 0; i < count; i++)); do
-    if [ "$(yq -r ".canisters[$i] | type" "$dir/icp.yaml")" = "!!map" ]; then
-      yq -r ".canisters[$i] | .name + \"\t\" + .recipe.type" "$dir/icp.yaml"
-    else
-      entry="$(yq -r ".canisters[$i]" "$dir/icp.yaml")"
-      [ -f "$dir/$entry/canister.yaml" ] \
-        || fail "icp.yaml references '$entry' but $entry/canister.yaml is missing"
-      yq -r '.name + "\t" + .recipe.type' "$dir/$entry/canister.yaml"
+    base=".templates.\"$template\".canisters[$i]"
+    name="$(yq -r "$base.name" "$CONFIG")"
+    [ -n "$name" ] && [ "$name" != "null" ] \
+      || fail "canister #$i of template '$template' has no name in $CONFIG"
+    name="${name//"{{project-name}}"/$project}"
+
+    if [ "$(yq -r "$base.curl // false" "$CONFIG")" = "true" ]; then
+      http_check "$name"
+    fi
+    if [ "$(yq -r "$base.call" "$CONFIG")" != "null" ]; then
+      call_check "$name" \
+        "$(yq -r "$base.call.method" "$CONFIG")" \
+        "$(yq -r "$base.call.args" "$CONFIG")" \
+        "$(yq -r "$base.call.expect" "$CONFIG")"
     fi
   done
-}
-
-# verify_canisters <project-dir>
-# Exercises every deployed canister: asset canisters get the HTTP check,
-# everything else gets the greet call.
-verify_canisters() {
-  local dir="$1" name type
-  while IFS=$'\t' read -r name type; do
-    case "$type" in
-      *asset-canister*) http_check "$name" ;;
-      *) call_greet "$name" ;;
-    esac
-  done < <(canister_specs "$dir")
 }
 
 # assert_hello_world_layout <project-dir>
@@ -173,7 +172,7 @@ run_permutation() {
     build
     network_start
     deploy
-    verify_canisters .
+    verify_canisters "$template" "$project"
   ) || rc=$?
 
   icp network stop --project-root-override "$dir/$project" >/dev/null 2>&1 || true
