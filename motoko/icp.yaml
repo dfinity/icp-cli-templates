@@ -3,11 +3,7 @@
 canisters:
   - name: {{project-name}}
     recipe:
-      type: "@dfinity/motoko@v4.1.0"
-      configuration:
-        main: src/main.mo
-        # optional
-        candid: {{project-name}}.did
+      type: "@dfinity/motoko@v5.0.0"
 
 {% if network_type == "Docker" -%}
 networks:

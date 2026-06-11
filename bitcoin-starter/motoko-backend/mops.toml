@@ -2,4 +2,8 @@
 core = "2.3.1"
 
 [toolchain]
-moc = "1.3.0"
+moc = "1.9.0"
+
+[canisters.backend]
+main = "src/main.mo"
+candid = "backend.did"
