@@ -5,9 +5,24 @@
 REPO="${REPO:-/repo}"
 GATEWAY_PORT=8000
 
-# Never send icp telemetry from test runs (also set in tests/Dockerfile, but
-# exported here so it holds however the harness is invoked).
+# Never send icp telemetry from test runs.
 export DO_NOT_TRACK=1
+
+# The container runs as root but doesn't set $USER, which cargo-generate
+# (inside `icp new`) requires.
+export USER="${USER:-root}"
+
+# Stopgap until ghcr.io/dfinity/icp-dev-env-all ships yq: install it at
+# startup. Becomes a no-op once the base image includes it.
+YQ_VERSION=v4.53.3
+ensure_yq() {
+  command -v yq >/dev/null && return 0
+  step "setup: installing yq $YQ_VERSION"
+  curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_$(dpkg --print-architecture)" \
+    -o /usr/local/bin/yq \
+    && chmod +x /usr/local/bin/yq \
+    || fail "could not install yq"
+}
 
 step() { printf '\n==> %s\n' "$*"; }
 fail() { printf 'FAIL: %s\n' "$*" >&2; exit 1; }

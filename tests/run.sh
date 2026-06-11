@@ -32,6 +32,7 @@ matches_filter() {
 WORKDIR="$(mktemp -d)"
 trap 'rm -rf "$WORKDIR"' EXIT
 
+ensure_yq
 prepare_template_source "$WORKDIR/template-src"
 
 RESULTS=()

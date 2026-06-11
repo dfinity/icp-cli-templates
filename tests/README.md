@@ -16,10 +16,11 @@ the harness:
 7. stops the network and cleans up.
 
 Tests always run inside a container, against the `icp` CLI pinned in the
-image — the host only needs Docker. The image
-([`Dockerfile`](./Dockerfile)) is a thin layer over
-[`ghcr.io/dfinity/icp-dev-env-all`](https://github.com/dfinity/icp-dev-env),
-which provides the icp CLI, Rust + wasm32 target, mops, and Node.js.
+image — the host only needs Docker. They run directly on
+[`ghcr.io/dfinity/icp-dev-env-all`](https://github.com/dfinity/icp-dev-env)
+(tag pinned in the [`Makefile`](../Makefile)), which provides the icp CLI,
+Rust + wasm32 target, mops, and Node.js. The harness installs `yq` at
+startup if the image doesn't have it yet.
 
 ## Running
 
@@ -32,7 +33,7 @@ make test FILTER=hello-world
 make test FILTER=hello-world:rust:react
 
 # debugging: shell into the image and drive the harness manually
-docker run --rm -it -v "$PWD":/repo:ro icp-template-tests bash
+docker run --rm -it -v "$PWD":/repo:ro ghcr.io/dfinity/icp-dev-env-all:0.3.2 bash
 $ /repo/tests/run.sh --fail-fast hello-world
 ```
 
