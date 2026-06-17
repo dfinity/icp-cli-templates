@@ -2,10 +2,8 @@
 canisters:
   - name: backend 
     recipe:
-      type: "@dfinity/rust@v3.2.0"
+      type: "@dfinity/rust@v3.3.0"
       configuration:
-        # cargo package for canister (required field)
-        package: backend 
         shrink: true
         # optional
         candid: {{ project-name }}.did
