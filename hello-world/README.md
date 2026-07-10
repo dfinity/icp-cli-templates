@@ -7,7 +7,7 @@ This example demonstrates a full-stack app with a frontend and backend canister,
 This project consists of two canisters:
 
 - [backend](./backend/): a {{backend_type}} canister with its [`backend.did`](./backend/backend.did) file.
-- [frontend](./frontend/): a [Vite](https://vite.dev/) webapp deployed in an asset canister.
+- [frontend](./frontend/): a {{frontend_type}} webapp deployed in an asset canister.
 
 ### Bindings Generation
 

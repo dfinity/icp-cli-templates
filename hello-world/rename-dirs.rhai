@@ -24,4 +24,7 @@ switch frontend_type {
   "vue" => {
     file::rename("vue-frontend", "frontend");
   }
+  "svelte" => {
+    file::rename("svelte-frontend", "frontend");
+  }
 }
