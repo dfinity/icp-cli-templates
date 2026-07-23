@@ -42,9 +42,9 @@ in `AGENTS.md` is left untouched.
 |------|--------------|---------------|-------------------------|
 | **autosync** | Claude Code users who want zero-maintenance, always-current skills | bash, `curl`, `jq`, Claude Code | A `SessionStart` hook (`.claude/sync-ic-skills.sh`) mirrors the latest skills into `.claude/skills/` every session |
 | **pinned** | Any agent/harness; teams wanting reproducible, version-locked skills | Node / `npx` | `npx skills add dfinity/icskills` records a `skills-lock.json`; skills restored/refreshed via the CLI |
-| **registry** | Anyone; zero install; the safe default | Network access | Skills fetched fresh from the registry on demand each session |
+| **on-demand** | Anyone; zero install; the safe default | Network access | Skills fetched fresh from the registry on demand each session |
 
-`registry` is the **recommended default** and the fallback (see below) because it
+`on-demand` is the **recommended default** and the fallback (see below) because it
 installs nothing, works with any agent, and is fully reversible.
 
 ### Pinned update policy
@@ -93,7 +93,7 @@ recoverable.
 ## Non-interactive sessions, and "just start"
 
 The onboarding never blocks your actual work. If a session can't ask you
-(non-interactive/CI) or you'd rather just start coding, the agent uses `registry`
+(non-interactive/CI) or you'd rather just start coding, the agent uses `on-demand`
 for that session only and **does not modify `AGENTS.md`** — leaving the choice
 open so a later interactive session can still make it. A choice is persisted only
 when you actively make one.
@@ -115,6 +115,6 @@ the configured block by hand if you know the target mode.)
 The self-rewrite is deliberately simple (clear markers, copy-one-block-verbatim)
 so a wide range of agents can perform it. It has been validated across simulated
 Claude Code / Cursor / Aider sessions. A less capable model could still mis-edit
-the block; because `registry` is side-effect-free and every mode is recoverable,
+the block; because `on-demand` is side-effect-free and every mode is recoverable,
 the failure modes are benign (an extra prompt, or one session on general
 knowledge) rather than destructive.
