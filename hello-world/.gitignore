@@ -14,8 +14,3 @@
 .icp/cache/
 # Do NOT ignore .icp/data/ — it stores mainnet canister ID mappings.
 # See: https://github.com/dfinity/icp-cli/blob/main/docs/concepts/project-model.md#whats-safe-to-delete
-
-# Agent skill caches — managed by the autosync hook or `npx skills`, restored
-# from skills-lock.json. Not source; safe to delete.
-.claude/skills/
-.agents/skills/

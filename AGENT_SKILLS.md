@@ -49,11 +49,19 @@ installs nothing, works with any agent, and is fully reversible.
 
 ### Pinned update policy
 
-When `pinned` is chosen, you also pick how new sessions keep skills current:
+Pinned means "use the version-locked skills" — that is the safe default, so the two
+policies only differ in how updates are offered (there is deliberately no silent
+auto-update, which a prompt cannot enforce reliably):
 
-- **auto** — each session runs `npx skills update` silently.
-- **confirm** — each session asks you first, then runs `npx skills update`.
-- **off** — never auto-updates; you update manually when you want.
+- **manual** — skills change only when the user runs `npx skills update`.
+- **ask-first** — before the first task of a session, the agent offers to run
+  `npx skills update`. If the user declines, or the session is non-interactive
+  (e.g. CI), it keeps the locked versions and continues — it never blocks the task.
+
+Either way, if the skills are missing they are restored from `skills-lock.json`
+with `npx skills experimental_install`. For always-latest without asking, use
+`autosync` (Claude Code) or `on-demand` instead — pinned is about control, not
+freshness.
 
 ## The two fallbacks (and why they differ)
 
@@ -68,27 +76,24 @@ the mode — because each mode stores skills differently:
   `skills-lock.json`, so the exact locked versions are restored deterministically
   from it.
 
-## What's committed vs. git-ignored
+## Version control — the maintainer's call
 
-Skill files are treated as a **managed cache**, not source. The generated
-`.gitignore` ignores:
+The templates do **not** touch `.gitignore`; how the skill directories
+(`.claude/skills/`, `.agents/skills/`) are tracked is your decision:
 
-```
-.claude/skills/
-.agents/skills/
-```
+- **Commit them** — reproducible, offline, and reviewable; a natural fit for
+  `pinned`. Trade-off: with `autosync`, refreshed skills show up as changes to
+  commit, and `npx skills` may use symlinks that are awkward across platforms.
+- **Git-ignore them** — treat them as a managed cache (like `node_modules`); a
+  natural fit for `autosync` (no churn). They are repopulated by the hook, by
+  `npx skills experimental_install` (pinned), or by on-demand fetch.
+- **Leave it to your harness's default** — also fine; just note that untracked
+  skill files will otherwise show up in `git status`.
 
-Committed instead is the small metadata that makes the cache reproducible:
-
-- **pinned** commits `skills-lock.json` (repo root). Teammates restore the exact
-  versions with `npx skills experimental_install`.
-- **autosync** commits the hook and script (`.claude/settings.json`,
-  `.claude/sync-ic-skills.sh`) — *not* the skills themselves, which the hook
-  repopulates each session.
-
-This avoids committing frequently-changing generated files (no surprise diffs, no
-cross-platform symlink issues from `npx skills`), while keeping every mode fully
-recoverable.
+Whichever you choose, keep the small reproducibility metadata committed:
+`skills-lock.json` for `pinned`, and the hook + `.claude/sync-ic-skills.sh` for
+`autosync`. That way every mode stays fully recoverable regardless of the
+`.gitignore` decision.
 
 ## Non-interactive sessions, and "just start"
 
