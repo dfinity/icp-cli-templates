@@ -58,6 +58,16 @@ auto-update, which a prompt cannot enforce reliably):
   `npx skills update`. If the user declines, or the session is non-interactive
   (e.g. CI), it keeps the locked versions and continues — it never blocks the task.
 
+**An update is refresh + discover.** `npx skills update` only refreshes and prunes
+skills already in `skills-lock.json` — it does **not** pull in skills added to the
+repo since you pinned ([vercel-labs/skills#591](https://github.com/vercel-labs/skills/issues/591)),
+and its stale-skill prune can silently no-op for shorthand sources like
+`dfinity/icskills` ([vercel-labs/skills#1376](https://github.com/vercel-labs/skills/issues/1376)).
+So whichever policy you pick, an update should also run
+`npx skills add dfinity/icskills --list` and offer to add any skills not yet installed
+— never `--all`, since pinning is curated. A **renamed** skill surfaces there under its
+new name; if `update` left the old name behind, drop it with `npx skills remove <old-name>`.
+
 Either way, if the skills are missing they are restored from `skills-lock.json`
 with `npx skills experimental_install`. For always-latest without asking, use
 `autosync` (Claude Code) or `on-demand` instead — pinned is about control, not
