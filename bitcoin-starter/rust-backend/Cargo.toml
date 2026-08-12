@@ -8,4 +8,5 @@ crate-type = ["cdylib"]
 
 [dependencies]
 candid = "0.10"
-ic-cdk = "0.19"
+ic-cdk = "0.20"
+ic-cdk-bitcoin-canister = "0.2"
