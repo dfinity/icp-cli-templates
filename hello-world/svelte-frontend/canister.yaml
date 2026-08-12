@@ -1,11 +1,11 @@
-# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v1.0.0/docs/schemas/canister-yaml-schema.json
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v1.3.0/docs/schemas/canister-yaml-schema.json
 
 name: frontend
 
 recipe:
   # https://github.com/dfinity/icp-cli-recipes/blob/main/recipes/static-site/README.md
   # IMPORTANT: This recipe requires icp-cli >= 0.2.7
-  type: "@dfinity/static-site@v0.3.1"
+  type: "@dfinity/static-site@v0.3.3"
   configuration:
     build:
       # Install the dependencies

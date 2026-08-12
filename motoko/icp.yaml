@@ -1,9 +1,9 @@
-# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v1.0.0/docs/schemas/icp-yaml-schema.json
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v1.3.0/docs/schemas/icp-yaml-schema.json
 
 canisters:
   - name: {{project-name}}
     recipe:
-      type: "@dfinity/motoko@v5.0.0"
+      type: "@dfinity/motoko@v5.1.0"
 
 {% if network_type == "Docker" -%}
 networks:

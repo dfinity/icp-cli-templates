@@ -3,7 +3,7 @@
 //! Demonstrates reading Bitcoin balance via the Bitcoin canister API.
 
 use candid::CandidType;
-use ic_cdk::bitcoin_canister::{
+use ic_cdk_bitcoin_canister::{
     bitcoin_get_balance, get_bitcoin_canister_id, GetBalanceRequest, Network, Satoshi,
 };
 
@@ -28,7 +28,7 @@ fn get_network() -> Network {
 async fn get_balance(address: String) -> Satoshi {
     bitcoin_get_balance(&GetBalanceRequest {
         address,
-        network: get_network(),
+        network: get_network().into(),
         min_confirmations: None,
     })
     .await
@@ -46,7 +46,7 @@ fn get_config() -> BitcoinConfig {
             Network::Regtest => "regtest",
         }
         .to_string(),
-        bitcoin_canister_id: get_bitcoin_canister_id(&network).to_string(),
+        bitcoin_canister_id: get_bitcoin_canister_id(network).to_string(),
     }
 }
 

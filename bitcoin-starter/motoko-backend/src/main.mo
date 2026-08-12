@@ -5,7 +5,7 @@
 import Runtime "mo:core/Runtime";
 import Text "mo:core/Text";
 
-persistent actor Backend {
+actor Backend {
   public type Satoshi = Nat64;
   public type BitcoinAddress = Text;
 

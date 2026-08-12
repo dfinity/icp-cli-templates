@@ -3,7 +3,7 @@
 # image; the host only needs Docker.
 
 # Official ICP dev environment; the tag pins the icp CLI version under test.
-IMAGE ?= ghcr.io/dfinity/icp-dev-env-all:0.3.2
+IMAGE ?= ghcr.io/dfinity/icp-dev-env-all:1.2.0
 # Optional permutation filter, e.g. `make test FILTER=hello-world:rust:react`
 FILTER ?=
 
