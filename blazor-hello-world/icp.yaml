@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v1.3.0/docs/schemas/icp-yaml-schema.json
+canisters:
+  - backend
+  - frontend
+networks:
+  - name: local
+    mode: managed
+    gateway:
+      port: 8000
