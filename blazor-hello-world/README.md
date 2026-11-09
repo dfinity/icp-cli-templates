@@ -1,4 +1,6 @@
 # ICP Blazor Hello World
+full medium article : 
+https://medium.com/@mitnick2012/your-net-blazor-skills-just-became-blockchain-skills-c41c14d87b44
 
 A hello world template combining **Blazor WebAssembly (.NET 10)** on the frontend and **Motoko** on the backend, deployed fully on-chain on the **Internet Computer (ICP)**.
 
