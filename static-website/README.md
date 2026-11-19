@@ -1,20 +1,20 @@
 # ICP Static Website Example
 
-This example demonstrates how to deploy a static website to ICP using the `asset-canister` recipe.
+This example demonstrates how to deploy a static website to ICP using the `static-site` recipe.
 
 ## Overview
 
-The `asset-canister` recipe makes it easy to deploy a canister hosting static assets.
+The `static-site` recipe makes it easy to deploy a canister hosting static assets.
 
 ## Configuration
 
-The [`icp.yaml`](./icp.yaml) file configures a canister using the `asset-canister` recipe:
+The [`icp.yaml`](./icp.yaml) file configures a canister using the `static-site` recipe:
 
 ```yaml
 canisters:
   - name: frontend
     recipe:
-      type: "@dfinity/asset-canister@<version>"
+      type: "@dfinity/static-site@<version>"
       configuration:
         build:
           - npm install
@@ -24,7 +24,7 @@ canisters:
 
 ### Key Components
 
-- **`type: "@dfinity/asset-canister@<version>"`**: Uses the asset-canister recipe for hosting static files. See [available versions](https://github.com/dfinity/icp-cli-recipes/releases?q=asset-canister&expanded=true).
+- **`type: "@dfinity/static-site@<version>"`**: Uses the static-site recipe for hosting static files. See [available versions](https://github.com/dfinity/icp-cli-recipes/releases?q=static-site&expanded=true).
 - **`build`**: Specifies the build commands to run before uploading assets
 - **`dir`**: Specifies the directory containing the built assets to upload
 
@@ -39,7 +39,7 @@ canisters:
 
 ## How It Works
 
-1. ICP-CLI uses the `asset-canister` recipe to expand the build and sync steps of the canister.
+1. ICP-CLI uses the `static-site` recipe to expand the build and sync steps of the canister.
 2. The build command (`npm run build`) uses Vite to compile and bundle assets into the `dist` directory.
 3. The asset canister is deployed.
 4. The contents of the `dist` directory are synchronized to the asset canister.
