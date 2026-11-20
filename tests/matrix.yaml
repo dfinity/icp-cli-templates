@@ -49,3 +49,16 @@ templates:
           expect: 'Hello, ICP!'
       - name: frontend
         curl: true
+
+  blazor-hello-world:
+    permutations:
+      - {}
+    canisters:
+      - name: '{{project-name}}-backend'
+        call:
+          method: hello
+          args: '("ICP")'
+          expect: 'Hello, ICP!'
+      - name: '{{project-name}}-frontend'
+        curl: true
+

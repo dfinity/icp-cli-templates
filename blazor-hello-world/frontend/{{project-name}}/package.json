@@ -1,0 +1,16 @@
+{
+  "name": "blazor-icp",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "@icp-sdk/core": "~6.1.0"
+  },
+  "devDependencies": {
+    "webpack": "~5.107.0",
+    "webpack-cli": "~5.1.0",
+    "ts-loader": "~9.6.0",
+    "typescript": "~5.9.0"
+  }
+}

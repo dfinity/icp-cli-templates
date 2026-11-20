@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=https://github.com/dfinity/icp-cli/raw/refs/tags/v1.3.0/docs/schemas/canister-yaml-schema.json
+name: "{{ project-name }}-frontend"
+build:
+  steps:
+    # 1. Build the TypeScript ICP agent bundle, then the Blazor WASM app.
+    - type: script
+      commands:
+        - cd {{project-name}} && npm install && npm run build
+        - dotnet publish {{project-name}}/{{project-name}}.csproj -c Release
+    # 2. Use the asset canister WASM vendored next to this file instead of
+    #    fetching it from GitHub on every build. The `@dfinity/asset-canister`
+    #    recipe downloaded it from
+    #    https://github.com/dfinity/sdk/releases/latest/download/assetstorage.wasm.gz
+    #    with no sha256, so icp-cli re-downloaded it on every deploy and any
+    #    network hiccup failed the build ("failed to fetch wasm file").
+    #    See vendor/README.md for how to refresh this file.
+    - type: pre-built
+      path: vendor/assetstorage.wasm.gz
+      sha256: 04e565b3425fe7510ee16b02adcfe3f01abc9a2725c82a21cb08969241debd62
+sync:
+  steps:
+    # Upload the published wwwroot to the asset canister (same plugin step the
+    # @dfinity/asset-canister recipe emits).
+    - type: plugin
+      url: https://github.com/dfinity/certified-assets/releases/download/migration-v2.2.1-6b48585/sync_plugin.wasm
+      sha256: ca7cb5666c30d2875f8d5e10535f8a53f97a86c79c263f7d5bdac2fdd1bbf83c
+      dirs:
+        - "{{project-name}}/bin/Release/net10.0/publish/wwwroot"

@@ -6,4 +6,5 @@ sub_templates = [
   "proxy",
   "rust",
   "static-website",
+  "blazor-hello-world",
 ]
